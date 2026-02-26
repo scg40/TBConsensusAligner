@@ -64,7 +64,7 @@ python yourfolder/galaxy_main.py \
 
 ```
 
-## Logic consensus.py 
+## Logic consensus_galaxy.py 
 
 This script produces consensus FASTA files from VCFs. The user provides the VCFs, the reference genome,
 the multisample depth file obtained from `bamtools depth` and optionally BED files to mask certain genomic regions.
@@ -95,7 +95,7 @@ Since the VCF for which the script is tailored to does not have the allele frequ
 `RO = REF allele occurance` and `AO = ALT allele occurance` with 
 `AF = AO / ( sum(all AO's) + RO )`.
 
-## Logic snp_aligner.py
+## Logic snp_aligner_galaxy.py
 
 This script produces a SNP alignment i.e. multi-sequence alignment of polymorphic positions in FASTA format from consensus FASTA files.
 The consensus FASTAs are generated in the previous step by `consensus_galaxy.py` wrapped in `TBConsensusAligner`.
@@ -126,12 +126,13 @@ more than 90% gaps or undefined states, it will not be in the final alignment.
         - test_Galaxy_multiple_depths_header.tabular
         - test_reference_200bp.reference.fasta
         - test_regions_blindspots_modlin_farhat_and_PE_PPE_PGRS.bed
-        - test.outgrou.all.pos.vcf.gz
+        - test.outgroup.all.pos.vcf.gz
     - consensus_galaxy.py
     - main_galaxy.py
     - README.md
     - snp_aligner_galaxy.py
     - TBConsensusAligner.xml
+
 
 
 
