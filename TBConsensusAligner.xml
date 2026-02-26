@@ -1,0 +1,157 @@
+<tool id="TBConsensusAligner" name="TBConsensusAligner" version="1.0.0" profile="22.05">
+    <description>Generate consensus genomes and a variable alignment from MTBC VCF files</description>
+    <requirements>
+        <requirement type="package" version="3.12">python</requirement>
+        <requirement type="package" version="1.85">biopython</requirement>
+    </requirements>
+    <stdio>
+        <exit_code range="1:" level="fatal" />
+    </stdio>
+    <command><![CDATA[
+set -euo pipefail;
+
+mkdir -p output &&
+mkdir -p input_vcfs &&
+
+## Symlink VCFs
+#for $vcf in $vcf_files:
+    #set $id = $vcf.element_identifier
+    #set $safename = $id if $id.lower().endswith('.vcf') else $id + '.vcf'
+    ln -s '$vcf' 'input_vcfs/$safename' &&
+#end for
+
+python '$__tool_directory__/main_galaxy.py'
+    -s '$step'
+    #if $step == 'all' and $mode:
+        -m '$mode'
+    #end if
+    
+    #for $vcf in $vcf_files:
+        #set $id = $vcf.element_identifier
+        #set $safename = $id if $id.lower().endswith('.vcf') else $id + '.vcf'
+        -v 'input_vcfs/$safename'
+    #end for
+    
+    -r '$reference'
+    -d '$depth'
+    #if $outgroup_vcf:
+        -c '$outgroup_vcf'
+        -n '$outgroup_vcf.element_identifier'
+    #end if
+    #if $bed_files:
+        #for $bed in $bed_files:
+            -b '$bed'
+        #end for
+    #end if
+    -o 'output'
+    -g $undefined_states
+    #if $test_mode:
+        $test_mode
+    #end if
+    ]]></command>
+
+
+    <inputs>
+        <param argument="-s" name="step" type="select" optional="false" label="Workflow steps to run" help="Run either consensus, or both consensus and snp_aligner">
+            <option value="consensus">Consensus only</option>
+            <option value="all">Consensus and variable alignment</option>
+        </param>
+
+        <param argument="-m" name="mode" type="select" optional="true" label="Output mode (only if step = all)" help="If -s all then output either just SNP alignment or both the alignment and the consensus fasta files">
+            <option value="alignment_only">Alignment_only</option>
+            <option value="everything">Consensus files and alignment</option>
+        </param>
+
+        <param argument="-v" name="vcf_files" type="data_collection" collection_type="list" format="vcf" optional="false" label="Input VCF files" help="path to the input directory with all the vcf files"/>
+        <param argument="-r" name="reference" type="data" format="fasta" optional="false" label="Reference genome" help="path to reference genome file"/>
+        <param argument="-d" name="depth" type="data" format="tabular" optional="false" label="Depth file" help="Depth file per position, output of samtools depth"/>
+        <param argument="-c" name="outgroup_vcf" type="data" format="vcf" optional="true" label="Outgroup VCF file" help="Outgroup VCF required for variable alignment"/>
+
+        <param argument="-b" name="bed_files" type="data" format="bed" multiple="true" optional="true" label="BED files" help="Optional BED files to mask certain genomic regions"/>
+
+        <param argument="-g" name="undefined_states" type="float" value="0.9" optional="true" label="Allowed percentage of undefined states per polymorphic positions" help="Adjust to control for how many undefined states ('N', 'X', '-') you allow per genomic position in the alignment. Lower value is more strict"/>
+
+        <param argument="-o" name="output_dir" type="hidden" value="output" optional="false" label="Output Directory" help="Output directory for consensus files and the variable alignment"/>
+
+        <param name="test_mode" type="boolean" label="Test mode (short reference)" truevalue="-t" falsevalue="" checked="false" />
+    </inputs>
+
+
+    <outputs>
+        <data name="snp_alignment" format="fasta" from_work_dir="output/snp_alignment.fasta" label="${tool.name} on ${on_string}: SNP Alignment">
+            <filter>step == 'all'</filter>
+        </data>
+
+        <collection name="consensus_fastas" type="list" label="${tool.name} on ${on_string}: Consensus FASTAs">
+            <filter>step == 'consensus' or (step == 'all' and mode == 'everything')</filter>
+            <discover_datasets pattern="(?P&lt;designation&gt;.+)\.consensus\.fasta" directory="output" format="fasta"/>
+        </collection>
+    </outputs>
+
+    <tests>
+        <test expect_num_outputs="2">
+            <param name="step" value="all"/>
+            <param name="mode" value="everything"/>
+            <param name="vcf_files">
+                <collection type="list">
+                    <element name="test_G77777" value="test_G77777.vcf.gz" ftype="vcf"/>
+                    <element name="test_G88888_k1" value="test_G88888_k1.vcf.gz" ftype="vcf"/>
+                    <element name="test_G99999.k2" value="test_G99999.k2.vcf.gz" ftype="vcf"/>
+                </collection>
+            </param>
+            <param name="reference" value="test_reference_200bp.reference.fasta" ftype="fasta"/>
+            <param name="depth" value="test_Galaxy_multiple_depths_header.tabular" ftype="tabular"/>
+            <param name="outgroup_vcf" value="test.outgroup.all.pos.vcf.gz" ftype="vcf"/>
+            <param name="bed_files" value="test_regions_blindspots_modlin_farhat_and_PE_PPE_PGRS.bed" ftype="bed"/>
+            <param name="undefined_states" value="0.9"/>
+            <param name="test_mode" value="true"/>
+        
+            <output name="snp_alignment" file="snp_alignment.fasta" compare="diff"/>
+        
+            <output_collection name="consensus_fastas" type="list" count="3">
+                <element name="test_G77777" file="test_G77777.consensus.fasta"/>
+                <element name="test_G88888_k1" file="test_G88888_k1.consensus.fasta"/>
+                <element name="test_G99999.k2" file="test_G99999.k2.consensus.fasta"/>
+            </output_collection>
+        </test>
+    </tests>
+
+    <help><![CDATA[
+
+Usage:   TBConsensusAligner [options] 
+
+Options: -s STR         ['consensus' or 'all'] Create either consensus files or consensus files and a variable alignment
+
+         -m STR         ['everything' or 'alignment_only'] If -s all is chosen, output either consensus files and the alignment or just the alignment
+
+         -v list[STR]   Path to the input VCF files
+
+         -r STR         Path to the reference genome
+
+         -d STR         Path to the depth file created by samtools depth
+
+         -c STR         Path to the outgroup VCF for the alignment
+
+         -b list[STR]   Path to the BED files to mask certain genomic regions
+
+         -o STR         Path to the output directory
+
+         -g FLOAT       Percentage of undefined states allowed per polymorphic position in the alignment default at 90 percent value=0.9
+
+         -t BOOLEAN     Test Mode to run the script with smaller genomes
+         
+
+    
+    ]]></help>
+    <citations>
+        <citation type="bibtex">
+@misc{githubtbconsensusaligner,
+  author = {Schüpbach, Gian},
+  year = {2026},
+  title = {TBConsensusAligner},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  url = {https://github.com/scg40/GOMA-Pipeline-Documentation},
+}</citation>
+    </citations>
+</tool>
