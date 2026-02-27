@@ -16,7 +16,6 @@ It is built on top of consensus.py and snp_aligner.py.
 The user can choose the following with the -s option.
 -s all:         Input = VCFs, output = SNP alignment -> runs consensus.py and snp_aligner.py subsequently.
 -s consensus:   Input = VCFs, output = consensus fasta files -> runs just consensus.py
--s alignment:   Input = consensus fasta files, output = SNP alignment -> runs just snp_aligner.py.
 When -s all is chosen, -m option gives choice whether to just output the SNP alignment
 with -m alignment_only or both the SNP alignment and the consensus fasta files with  -m everything
 
@@ -93,34 +92,18 @@ def main():
     # -s consensus: Input = VCFs, output = consensus fasta files -> runs just consensus.py
     if args.step == 'consensus':
 
-        # Adress output paths
-        # args.consensus_dir = os.path.join(args.output_dir, "consensus")
-        # os.makedirs(args.consensus_dir, exist_ok=True)
-
         check_consensus_args(args)
 
         consensus_galaxy.main(args)
 
     # -s all: Input = VCFs, output = SNP alignment -> runs consensus.py and snp_aligner.py subsequently
     elif args.step == 'all':
-
-                # Adress output paths
-        # args.consensus_dir = os.path.join(args.output_dir, "consensus")
-        # os.makedirs(args.consensus_dir, exist_ok=True)
         
         check_consensus_args(args)
         check_snp_aligner_args(args)
 
         consensus_galaxy.main(args)
         snp_aligner_galaxy.main(args)
-
-                # Adress output paths
-        # args.alignment_dir = os.path.join(args.output_dir, "alignment")
-        # os.makedirs(args.alignment_dir, exist_ok=True)
-
-        
-
-        
 
         # After consensus is run and -m alignment_only is chosen, delete the fasta files again
         if args.mode == 'alignment_only':
