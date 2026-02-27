@@ -30,8 +30,6 @@ def get_basename(vcf_path):
     filename = os.path.basename(vcf_path)
     
     # Use regex to "look ahead" for .vcf and take everything before it.
-    # This captures 'Sample_01.recal' from 'Sample_01.recal.vcf.gz'
-    # or from 'Sample_01.recal.vcf'
     match = re.split(r'\.vcf', filename, flags=re.IGNORECASE)
     
     return match[0]
