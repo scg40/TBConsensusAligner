@@ -149,7 +149,6 @@ def get_outgroup_vcf_var_pos(args, var_positions):
             print(f"MATCH FOUND: Position {key} is in Outgroup VCF. Base: {outgroup_vcf_dict[key]}")
         else:
             # Position not in VCF means it's the Reference base (or missing)
-            # In your case, you chose "-" for missing
             print(f"MATCH FAILED: Position {key} not found in Outgroup VCF keys.")
             outgroup_sequence.append("-")
 
@@ -160,7 +159,7 @@ def get_outgroup_vcf_var_pos(args, var_positions):
     return result
 
 
-# Main script to extract polymorphic positions from the alignment [aligned_sequences] 
+# Main script to extract polymorphic positions from the alignment
 def main(args):
     UNDEF_STAT = args.undefined_states  # Use the arg from your parser
     SEQ_DICT = fastas2dict(args)
@@ -178,7 +177,6 @@ def main(args):
     # Iterate through each genomic position one by one (Memory Efficient)
     for col_index in range(genome_length):
         # Build the column on the fly
-        # .replace('X', 'N') handles ambiguity
         column = [SEQ_DICT[name][col_index].replace('X', 'N') for name in seq_names]
         
         # Check for polymorphism (more than 1 unique state)
@@ -229,7 +227,6 @@ def main(args):
     print("Number of polymorphic sites:", len(pol_pos[0]) - 1)   
     print("Number of polymorphic_indices:", len(polymorphic_indices))
    
-    # Write the output file
     # Write the output file
     output_alignment_path = os.path.join(args.output_dir, 'snp_alignment.fasta')
     with open(output_alignment_path, 'w') as output_file:
