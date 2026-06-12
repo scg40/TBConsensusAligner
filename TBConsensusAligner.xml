@@ -151,7 +151,7 @@ Options: -s STR         ['consensus' or 'all'] Create either consensus files or 
   title = {TBConsensusAligner},
   publisher = {GitHub},
   journal = {GitHub repository},
-  url = {https://github.com/scg40/GOMA-Pipeline-Documentation},
+  url = {https://github.com/scg40/TBConsensusAligner},
 }</citation>
     </citations>
 </tool>
