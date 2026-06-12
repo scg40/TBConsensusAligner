@@ -1,5 +1,6 @@
 import os
 import glob
+import sys
 import argparse
 from collections import defaultdict
 from pathlib import Path
@@ -70,7 +71,47 @@ def check_snp_aligner_args(args):
     # If missing_snp_aligner_args has elements, it raises and error and outputs what arguments are missing, separated by a ','
     if missing_snp_aligner_args:
         raise ValueError(f"Missing required arguments: {', '.join(missing_snp_aligner_args)}")
+
+# Function to prevent crashing by checking for 1) reference genome length and 2) amounts of variants in VCF
+def safety_check(args, max_total_variants=200000, max_ref_length=16100000):
+
+    # If a VCF has more than 200'000 entries, it is most likely not bacterial or filled with unfiltered sequencing errors
+    # The largest bacterial genome is Minicystis rosea with 16.04 Mbp
+
+    print("Executing safety check")
+
+    # Check length of reference genome and throw error if file not parsed or too long
+    try:
+        record = SeqIO.read(str(args.reference), "fasta")
+        genome_len = len(record.seq)
+    except Exception as e:
+        sys.exit(f"ERROR: Failed to parse the reference genome: {e}")
+
+    if genome_len > max_ref_length:
+        sys.exit(f"ERROR: Reference genome length ({genome_len} bp) exceeds the maximum allowed bacterial ceiling of {max_ref_length} bp.")
+
+    # Check number of variants in each VCF file
+    for vcf_path in args.vcf_files:
+        try:
+            with consensus_galaxy.open_vcf(vcf_path) as file:
+                variant_count = sum(1 for line in file if not line.startswith('#'))
+
+            # If one VCF file is to big, throw error
+            if variant_count > max_total_variants:
+                sys.exit(
+                    f"ERROR: Variant overload. File '{os.path.basename(vcf_path)}' "
+                    f"contains {variant_count} variant lines.\n"
+                    f"This exceeds the safety limit of {max_total_variants} variants per sample. "
+                    f"Filter or remove this VCF running the pipeline."
+                )
+        
+        except Exception as e:
+            sys.exit(f"ERROR: Failed reading VCF file {vcf_path}: {e}")
     
+    print(f"Safety check passed, Reference size: {genome_len} bp. Variants of all VCFs within safety margin.")
+    return genome_len
+
+
 # Main logic of the program
 def main():
 
@@ -89,6 +130,11 @@ def main():
     #print("VCFS:", args.vcf_files)
     #print("BEDS:", args.bed_files)
 
+    # Execute safety check and get the length of the reference genome
+    ref_genome_length = safety_check(args)
+
+    # Relay reference genome length to consensus_galaxy
+    args.calculated_ref_len = ref_genome_length
 
     # -s consensus: Input = VCFs, output = consensus fasta files -> runs just consensus.py
     if args.step == 'consensus':

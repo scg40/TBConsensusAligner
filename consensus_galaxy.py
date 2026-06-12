@@ -443,6 +443,15 @@ def main(args):
                 print("Fasta more than {reference_length} bp:", len(fasta_sequence))
 
         else: 
+            # Default reference length is set to ancestral MTBC ref length
+            # Get calculated ref len from object args if not available set to default 4411532
+            target_len = getattr(args, 'calculated_ref_len', 4411532)
+
+            # Created consensus sequence too short
+            if len(fasta_sequence) < target_len:
+                print("Fasta file not created")
+                print(f"Fasta has less than {target_len} bp: {len(fasta_sequence)}")
+            
             # The genomes have to have the length of the MTB genome = 4411532 bp
             # Created consensus sequence too short
             if len(fasta_sequence) < 4411532:
@@ -450,20 +459,18 @@ def main(args):
                 print("Fasta has less than 4411532 bp:", len(fasta_sequence))
 
             # Consensus sequence has correct length
-            elif len(fasta_sequence) == 4411532:
-
+            elif len(fasta_sequence) == target_len:
                 sample_name = get_basename(vcf_file)
                 output_filename = f"{sample_name}.consensus.fasta"
                 output_path = os.path.join(args.output_dir, output_filename)
                 with open(output_path, 'w') as output_file:
                     output_file.write(f">{sample_name}\n")
                     output_file.write("".join(fasta_sequence))
-
         
             # Consensus sequence too long
             else:
                 print("Fasta file not created")
-                print("Fasta more than 4411532 bp:", len(fasta_sequence))
+                print(f"Fasta more than {target_len} bp: {len(fasta_sequence)}")
         
 
         

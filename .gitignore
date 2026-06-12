@@ -1,0 +1,25 @@
+# --- Planemo & Galaxy Junk ---
+.planemo/
+database/
+tool_test_output.html
+tool_test_output.json
+all_results.json
+*.log
+
+# --- Python Junk ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.pytest_cache/
+
+# --- System Junk ---
+.DS_Store
+Thumbs.db
+
+# --- Dev files ---
+consensus_galaxy_backup.py
+main_galaxy_backup.py
+snp_aligner_galaxy_backup.py
