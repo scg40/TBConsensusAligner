@@ -450,12 +450,6 @@ def main(args):
                 print("Fasta file not created")
                 print(f"Fasta has less than {target_len} bp: {len(fasta_sequence)}")
             
-            # The genomes have to have the length of the MTB genome = 4411532 bp
-            # Created consensus sequence too short
-            if len(fasta_sequence) < 4411532:
-                print("Fasta file not created")
-                print("Fasta has less than 4411532 bp:", len(fasta_sequence))
-
             # Consensus sequence has correct length
             elif len(fasta_sequence) == target_len:
                 sample_name = get_basename(vcf_file)
