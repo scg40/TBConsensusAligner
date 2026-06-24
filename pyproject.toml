@@ -1,0 +1,30 @@
+[build-system]                              # Define the tools needed to build the project
+requires = ["setuptools>=61.0.0", "wheel"]  # Use Version 61.0.0 or newer
+build-backend = "setuptools.build_meta"     # USe setuptools to process metadata configuration
+
+[project]                                   # Human readable description
+name = "tb_consensus_aligner"               # Official name of the package
+version = "1.0.0"                           # Current version
+description = "Building consensus fasta files and variable multi-sequence alignments for mycobacterial genomes."    
+readme = "README.md"                        # Use the README.md file as the official documentation that is being opened
+requires-python = ">=3.8"                   
+license = {text = "MIT"}                    # MIT = fully open access
+authors = [
+    {name = "scg40", email = "gian.schuepbach@swisstph.ch"}
+]
+classifiers = [                             # Key words used to categorize the tool
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics"
+]
+dependencies = [                            # Automatically checks if Biopython is installed, if not, installs installed
+    "biopython>=1.80"
+]
+
+[project.scripts]                           # Craete command line shortcut
+tb-consensus-aligner = "tb_consensus_aligner.main_galaxy:main"
+
+[tool.setuptools]                           # Dictate to setuptools which folder contains the scripts
+packages = ["tb_consensus_aligner"]

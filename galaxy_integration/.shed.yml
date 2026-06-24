@@ -1,0 +1,10 @@
+name: tb_consensus_aligner
+owner: scg40
+description: Consensus genomes and variable alignment for MTBC sequences.
+long_description: |
+  A tool that takes VCFs from MTBC sequences and creates consensus genomes and subsequent variable alignment to create a phylogenetic tree.
+categories:
+  - Variant Analysis
+  - Sequence Analysis
+remote_repository_url: https://github.com/scg40/TBConsensusAligner
+type: unrestricted

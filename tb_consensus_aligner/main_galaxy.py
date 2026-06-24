@@ -6,8 +6,8 @@ from collections import defaultdict
 from pathlib import Path
 from Bio import SeqIO
 import gzip
-import consensus_galaxy
-import snp_aligner_galaxy
+from . import consensus_galaxy
+from . import snp_aligner_galaxy
 
 '''
 

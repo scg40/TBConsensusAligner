@@ -7,6 +7,10 @@ all_results.json
 *.log
 
 # --- Python Junk ---
+# Python build artifacts
+build/
+dist/
+*.egg-info/
 __pycache__/
 *.py[cod]
 *$py.class
