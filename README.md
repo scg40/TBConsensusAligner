@@ -16,6 +16,8 @@ or the used consensus FASTA files as well with the `-m` option.
 When running the `consensus_galaxy.py` the user has to provide the VCF files, the reference genome used in their creation and the multisample
 depth file from bamtools depth. Optionally, the user can provide one or several BED files to mask certain regions of the genome.
 
+The maximum allowed number of variants per VCF file used is 200 000, the maximum allowed length of the reference genome is 16 100 000 bp.
+
 ## Usage
 The script is run via the command line.
 
@@ -35,6 +37,8 @@ Options: -s STR         ['consensus' or 'all'] Create either consensus files or 
          -d STR         Path to the depth file created by samtools depth
 
          -c STR         Path to the outgroup VCF for the alignment
+
+         -n STR         Name of the output directory
 
          -b list[STR]   Path to the BED files to mask certain genomic regions
 
@@ -112,26 +116,7 @@ The user can control the proportion of gaps or undefined states (`-`or`N`) for a
 to be kept in the alignment (argument `-g`). By default, this is set to `0.9`, meaning that if a polymorphic position has 
 more than 90% gaps or undefined states, it will not be in the final alignment.
 
-## Directory structure used for development
 
-* TBConsensusAligner
-    * test_data
-        - snp_alignment.fasta
-        - test_G77777.consensus.fasta
-        - test_G77777.vcf.gz
-        - test_G88888_k1.consensus.fasta
-        - test_G88888_k1.vcf.gz
-        - test_G99999.k2.consensus.fasta
-        - test_G99999.k2.vcf.gz
-        - test_Galaxy_multiple_depths_header.tabular
-        - test_reference_200bp.reference.fasta
-        - test_regions_blindspots_modlin_farhat_and_PE_PPE_PGRS.bed
-        - test.outgroup.all.pos.vcf.gz
-    - consensus_galaxy.py
-    - main_galaxy.py
-    - README.md
-    - snp_aligner_galaxy.py
-    - TBConsensusAligner.xml
 
 
 

@@ -4,17 +4,15 @@ build-backend = "setuptools.build_meta"     # USe setuptools to process metadata
 
 [project]                                   # Human readable description
 name = "tb_consensus_aligner"               # Official name of the package
-version = "1.0.0"                           # Current version
+version = "1.0.1"                           # Current version
 description = "Building consensus fasta files and variable multi-sequence alignments for mycobacterial genomes."    
 readme = "README.md"                        # Use the README.md file as the official documentation that is being opened
-requires-python = ">=3.8"                   
-license = {text = "MIT"}                    # MIT = fully open access
+requires-python = ">=3.8"
 authors = [
     {name = "scg40", email = "gian.schuepbach@swisstph.ch"}
 ]
 classifiers = [                             # Key words used to categorize the tool
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Bio-Informatics"
