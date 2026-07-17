@@ -11,7 +11,9 @@ requires-python = ">=3.8"
 authors = [
     {name = "scg40", email = "gian.schuepbach@swisstph.ch"}
 ]
+license = {file = "LICENSE"}
 classifiers = [                             # Key words used to categorize the tool
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
     "Intended Audience :: Science/Research",
