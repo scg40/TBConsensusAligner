@@ -1,8 +1,7 @@
-<tool id="TBConsensusAligner" name="TBConsensusAligner" version="1.0.0" profile="22.05">
+<tool id="tb_consensus_aligner" name="TB Consensus Aligner" version="1.0.2+galaxy0" profile="23.0">
     <description>Generate consensus genomes and a variable alignment from MTBC VCF files</description>
     <requirements>
-        <requirement type="package" version="3.12">python</requirement>
-        <requirement type="package" version="1.85">biopython</requirement>
+        <requirement type="package" version="1.0.2">tb-consensus-aligner</requirement>
     </requirements>
     <stdio>
         <exit_code range="1:" level="fatal" />
@@ -20,7 +19,7 @@ mkdir -p input_vcfs &&
     ln -s '$vcf' 'input_vcfs/$safename' &&
 #end for
 
-python '$__tool_directory__/main_galaxy.py'
+tb-consensus-aligner
     -s '$step'
     #if $step == 'all' and $mode:
         -m '$mode'
@@ -50,7 +49,6 @@ python '$__tool_directory__/main_galaxy.py'
     #end if
     ]]></command>
 
-
     <inputs>
         <param argument="-s" name="step" type="select" optional="false" label="Workflow steps to run" help="Run either consensus, or both consensus and snp_aligner">
             <option value="consensus">Consensus only</option>
@@ -75,7 +73,6 @@ python '$__tool_directory__/main_galaxy.py'
 
         <param name="test_mode" type="boolean" label="Test mode (short reference)" truevalue="-t" falsevalue="" checked="false" />
     </inputs>
-
 
     <outputs>
         <data name="snp_alignment" format="fasta" from_work_dir="output/snp_alignment.fasta" label="${tool.name} on ${on_string}: SNP Alignment">
@@ -117,12 +114,11 @@ python '$__tool_directory__/main_galaxy.py'
     </tests>
 
     <help><![CDATA[
-
 Usage:   TBConsensusAligner [options] 
 
-Options: -s STR         ['consensus' or 'all'] Create either consensus files or consensus files and a variable alignment
+Options: -s STR        ['consensus' or 'all'] Create either consensus files or consensus files and a variable alignment
 
-         -m STR         ['everything' or 'alignment_only'] If -s all is chosen, output either consensus files and the alignment or just the alignment
+         -m STR        ['everything' or 'alignment_only'] If -s all is chosen, output either consensus files and the alignment or just the alignment
 
          -v list[STR]   Path to the input VCF files
 
@@ -139,19 +135,17 @@ Options: -s STR         ['consensus' or 'all'] Create either consensus files or 
          -g FLOAT       Percentage of undefined states allowed per polymorphic position in the alignment default at 90 percent value=0.9
 
          -t BOOLEAN     Test Mode to run the script with smaller genomes
-         
-
-    
     ]]></help>
     <citations>
         <citation type="bibtex">
 @misc{githubtbconsensusaligner,
-  author = {Schüpbach, Gian},
+  author = {Schuepbach, Gian.},
   year = {2026},
   title = {TBConsensusAligner},
   publisher = {GitHub},
   journal = {GitHub repository},
   url = {https://github.com/scg40/TBConsensusAligner},
-}</citation>
+}
+        </citation>
     </citations>
 </tool>
